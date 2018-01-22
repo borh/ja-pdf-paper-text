@@ -1,12 +1,12 @@
-(ns pdf-ja-paper-text-extractor.main
+(ns ja-pdf-paper-text.main
   (:require [pdfboxing.text :as text]
             [pdfboxing.info :as info]
             [clojure.string :as string]
             [datoteka.core :as fs]
             [corpus-utils.text :as utils]
             [clojure.string :as str]
-            [pdf-ja-paper-text-extractor.text :refer [multi-extract clean-text remove-title]]
-            [pdf-ja-paper-text-extractor.jp :refer [is-japanese?]]))
+            [ja-pdf-paper-text.text :refer [multi-extract clean-text remove-title]]
+            [ja-pdf-paper-text.jp :refer [is-japanese?]]))
 
 (defn base-name [s]
   (-> s

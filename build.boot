@@ -20,7 +20,7 @@
         :otherwise version)
       (catch Exception e (println "Not a git repository or empty repository. Please git init in this directory/make a commit.")))))
 
-(def project "pdf-ja-paper-text-extractor")
+(def project "ja-pdf-paper-text")
 (def version (deduce-version-from-git))
 
 (set-env!
@@ -46,15 +46,15 @@
 (require '[adzerk.boot-test :refer :all]
          '[adzerk.boot-reload :refer [reload]]
          '[tolitius.boot-check :as check]
-         '[pdf-ja-paper-text-extractor.main])
+         '[ja-pdf-paper-text.main])
 
 (task-options!
  pom {:project (symbol project)
       :version version
-      :description "PDF Japanese Paper Text Extractor"
+      :description "Japanese Paper PDF Text Extractor"
       :license {"The MIT License (MIT)" "http://opensource.org/licenses/mit-license.php"}}
- aot {:namespace #{'pdf-ja-paper-text-extractor.main}}
- jar {:main 'pdf-ja-paper-text-extractor.main
+ aot {:namespace #{'ja-pdf-paper-text.main}}
+ jar {:main 'ja-pdf-paper-text.main
       :file (str project "-app.jar")}
  target {:dir #{"target"}})
 
@@ -83,11 +83,11 @@
    (watch)
    (build)
    (speak)
-   (repl :init-ns 'pdf-ja-paper-text-extractor.main :server true)
+   (repl :init-ns 'ja-pdf-paper-text.main :server true)
    (target)))
 
 (deftask run []
-  (pdf-ja-paper-text-extractor.main/-main))
+  (ja-pdf-paper-text.main/-main))
 
 (require '[adzerk.boot-test :refer [test]])
 

@@ -1,4 +1,4 @@
-(ns pdf-ja-paper-text-extractor.jp)
+(ns ja-pdf-paper-text.jp)
 
 (defn char-writing-system
   "Return writing system type of char.

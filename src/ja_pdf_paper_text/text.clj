@@ -1,8 +1,8 @@
-(ns pdf-ja-paper-text-extractor.text
+(ns ja-pdf-paper-text.text
   (:require [clojure.string :as string]
             [me.raynes.conch :as sh]
             [pdfboxing.text :as text]
-            [pdf-ja-paper-text-extractor.jp :refer [is-japanese? char-writing-system]]
+            [ja-pdf-paper-text.jp :refer [is-japanese? char-writing-system]]
             [corpus-utils.text :as utils]))
 
 (defn remove-title [title journal s]
