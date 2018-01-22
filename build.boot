@@ -27,18 +27,21 @@
  :source-paths #{"src" "test"}
  :resource-paths #{"resources"}
  :dependencies
- '[[adzerk/boot-reload "0.5.1" :scope "test"]
-   #_[reloaded.repl "0.2.3" :scope "test"]
+ '[[adzerk/boot-reload "0.5.2" :scope "test"]
 
    [adzerk/boot-test "1.2.0" :scope "test"]
-   [tolitius/boot-check "0.1.4" :scope "test"]
-   [org.clojure/test.check "0.10.0-alpha1" :scope "test"]
+   [tolitius/boot-check "0.1.6" :scope "test"]
+   [org.clojure/test.check "0.10.0-alpha2" :scope "test"]
 
-   [org.clojure/clojure "1.9.0-alpha17"]
+   [org.clojure/clojure "1.9.0"]
    [org.clojure/tools.nrepl "0.2.13"]
 
+   [funcool/datoteka "1.0.0"]
+   [me.raynes/conch "0.8.0"]
    [pdfboxing "0.1.13"]
-   [com.ibm.icu/icu4j "59.1"]])
+   [org.bouncycastle/bcprov-jdk15on "1.59"]
+   [corpus-utils "0.2.10"]
+   [com.ibm.icu/icu4j "60.2"]])
 
 (require '[adzerk.boot-test :refer :all]
          '[adzerk.boot-reload :refer [reload]]
@@ -83,12 +86,14 @@
    (repl :init-ns 'pdf-ja-paper-text-extractor.main :server true)
    (target)))
 
+(deftask run []
+  (pdf-ja-paper-text-extractor.main/-main))
+
 (require '[adzerk.boot-test :refer [test]])
 
 (deftask uberjar
   "Build an uberjar"
   []
-  (println "Building uberjar")
   (comp
    (build)
    (aot)
