@@ -149,11 +149,12 @@
                               (extract-text db-entry)
                               (str/join "\n"))]
             (if (< (count text) 200)
-              (doseq [{:keys [program text chars]} (multi-extract pdf)]
+              (doseq [{:keys [program text chars]} (multi-extract pdf (:title db-entry) (:journal db-entry))]
                 (when (> chars 200)
                   (clojure.data.csv/write-csv sources-file [(mapv db-entry ks)] :separator \tab)
                   (println (format "Failed to extract text from '%s' using PDFBox, but %s worked (%s characters extracted)." pdf program chars))
-                  (spit (str out-fn "-" (name program)) text)))
+                  (spit (str out-fn "-" (name program)) text)
+                  (spit out-fn text)))
               (do (clojure.data.csv/write-csv sources-file [(mapv db-entry ks)] :separator \tab)
                   (spit out-fn text)))))))))
 
