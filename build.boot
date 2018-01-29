@@ -30,7 +30,7 @@
  '[[adzerk/boot-reload "0.5.2" :scope "test"]
 
    [adzerk/boot-test "1.2.0" :scope "test"]
-   [tolitius/boot-check "0.1.6" :scope "test"]
+   [tolitius/boot-check "0.1.7" :scope "test"]
    [org.clojure/test.check "0.10.0-alpha2" :scope "test"]
 
    [org.clojure/clojure "1.9.0"]
