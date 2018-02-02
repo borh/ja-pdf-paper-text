@@ -158,8 +158,13 @@
           (let [basename (base-name pdf)
                 parent   (fs/parent pdf)
                 out-fn   (str (fs/join parent basename) ".txt")
-                db-entry (assoc (get metadata-db basename)
-                                :year (:weekYear (bean (get (info/about-doc (str pdf)) "creation-date"))))
+                db-entry (update (get metadata-db basename) :year
+                                 (fn [year]
+                                   (let [pdf-meta-year (:weekYear (bean (get (info/about-doc (str pdf)) "creation-date")))
+                                         volume-as-year (let [y (get-in metadata-db [basename :volume])]
+                                                          (if (re-seq #"^[12]\d\d\d$" y)
+                                                            y))]
+                                     (or volume-as-year pdf-meta-year year))))
                 text     (->> (str pdf)
                               (extract-text db-entry)
                               (str/join "\n"))]
