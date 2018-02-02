@@ -112,27 +112,41 @@
         (clojure.data.csv/write-csv out-file [(mapv map-vals ks)] :separator \tab)))))
 
 (defn metadata [filename]
-  (->> (slurp filename)
-       (str/split-lines)
-       (drop 1)
-       (map (fn [s] (str/split s #"\t")))
-       (map (partial zipmap [:basename :title :author :journal :volume :number :pages :url]))
-       (map (fn [m] (-> m
-                        (assoc :title-string (:title m))
-                        (update :title (fn [title] (format "%s (%s/%s): 「%s」"
-                                                           (:journal m) (:volume m) (:number m) title)))
-                        (dissoc :volume :number :pages :journal)
-                        (assoc :permission false
-                               :genre-1 "人文社会学論文コーパス"
-                               :genre-2 (:journal m)
-                               :genre-3 ""
-                               :genre-4 ""
-                               :year 2017))))))
+  (sequence
+   (comp
+    (drop 1)
+    (map (fn [s] (str/split s #"\t")))
+    (map (partial zipmap [:basename :title :author :journal :volume :number :pages :url]))
+    (map (fn [m] (-> m
+                     (assoc :title-string (:title m))
+                     (update :title
+                             (fn [title]
+                               (format "%s%s: 「%s」"
+                                       (:journal m)
+                                       (cond
+                                         (and (not-empty (:volume m))
+                                              (not-empty (:number m)))
+                                         (format " (%s/%s)" (:volume m) (:number m))
+
+                                         (not-empty (:volume m))
+                                         (format " (%s巻)" (:volume m))
+
+                                         (not-empty (:number m))
+                                         (format " (%s号)" (:number m))
+
+                                         :else "")
+                                       title)))
+                     (assoc :permission false
+                            :genre-1 "人文社会学論文"
+                            :genre-2 (:journal m)
+                            :genre-3 ""
+                            :genre-4 ""
+                            :year 2017)))))
+   (str/split-lines (slurp filename))))
 
 (defn extract-text [{:keys [title-string genre-2] :as db-entry} pdf-filename]
   (let [raw-text (try (text/extract pdf-filename)
-                      (catch java.lang.UnsupportedOperationException e (println e) ""))
-        pdf-meta (info/about-doc pdf-filename)]
+                      (catch java.lang.UnsupportedOperationException e (println e) ""))]
     (println db-entry)
     (clean-text raw-text title-string genre-2)))
 
