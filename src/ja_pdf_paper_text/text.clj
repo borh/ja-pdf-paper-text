@@ -15,8 +15,9 @@
         (println (format "Rejecting: title='%s', journal='%s', s='%s', ms='%s'" title journal s maybe-sentence))))
     s))
 
-(defn remove-space-between-chars [s]
+(defn remove-space-between-chars
   "Removes spaces between Japanese character classes."
+  [s]
   (if (> (count s) 2)
     (str (subs s 0 2)
          (string/join (filter identity
@@ -35,7 +36,7 @@
                                               (#{:romaji :commas} a-c-s)) nil
                                          :else c)))
                                    (drop 1 s) (drop 2 s) (drop 3 s))))
-         (subs s (- (count s) 1)))))
+         (subs s (dec (count s))))))
 
 (defn clean-text [text title journal]
   (if (empty? text)
