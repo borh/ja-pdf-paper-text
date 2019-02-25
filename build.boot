@@ -27,21 +27,26 @@
  :source-paths #{"src" "test"}
  :resource-paths #{"resources"}
  :dependencies
- '[[adzerk/boot-reload "0.5.2" :scope "test"]
+ '[[adzerk/boot-reload "0.6.0" :scope "test"]
 
    [adzerk/boot-test "1.2.0" :scope "test"]
-   [tolitius/boot-check "0.1.7" :scope "test"]
-   [org.clojure/test.check "0.10.0-alpha2" :scope "test"]
+   [tolitius/boot-check "0.1.12" :scope "test"]
+   [org.clojure/test.check "0.10.0-alpha3" :scope "test"]
 
-   [org.clojure/clojure "1.9.0"]
+   ;; Java >= 9 compat
+   [com.sun.xml.bind/jaxb-impl      "2.4.0-b180830.0438"]
+   [com.sun.xml.bind/jaxb-core      "2.3.0.1"]
+   [org.glassfish.jaxb/jaxb-runtime "2.4.0-b180830.0438"]
+
+   [org.clojure/clojure "1.10.0"]
    [org.clojure/tools.nrepl "0.2.13"]
 
    [funcool/datoteka "1.0.0"]
    [me.raynes/conch "0.8.0"]
    [pdfboxing "0.1.13"]
-   [org.bouncycastle/bcprov-jdk15on "1.59"]
+   [org.bouncycastle/bcprov-jdk15on "1.61"]
    [corpus-utils "0.2.10"]
-   [com.ibm.icu/icu4j "60.2"]])
+   [com.ibm.icu/icu4j "63.1"]])
 
 (require '[adzerk.boot-test :refer :all]
          '[adzerk.boot-reload :refer [reload]]
