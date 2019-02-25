@@ -17,92 +17,14 @@
 
 ;; 科研の分類を使う
 (def journal-to-category
-  #_(->>
-     (slurp "/home/bor/Corpora/Social-Sciences-Papers/gakkai.tsv")
-     (str/split-lines)
-     (map (fn [s]
-            (let [[number-of-pdfs & [society & info]] (str/split s #"\t+")]
-              [society info]))))
-  {"佛教文化学会紀要" "",
-   "日本學士院紀要" "",
-   "ソシオロジ" "",
-   "オリエント" "",
-   "経済地理学年報" "",
-   "カリキュラム研究" "",
-   "21世紀東アジア社会学" "",
-   "家族研究年報" "",
-   "南アジア研究" "",
-   "国際情報研究 " "",
-   "年報政治学" "",
-   "行動経済学" "",
-   "日本の神学" "",
-   "映画研究" "",
-   "美学" "",
-   "フランス語フランス文学研究" "",
-   "法政論叢" "",
-   "法制史研究" "",
-   "日本の教育史学" "",
-   "映像学" "",
-   "近世文藝" "",
-   "社会学評論" "",
-   "西洋古典学研究" "",
-   "ロシア・東欧研究" "",
-   "アジア研究" "",
-   "社会科教育研究" "",
-   "公共選択の研究" "",
-   "日本文学" "",
-   "経営史学" "",
-   "教育社会学研究" "",
-   "文化人類学" "",
-   "産業学会研究年報" "",
-   "生活経済学研究" "",
-   "近代日本の創造史" "",
-   "英文学研究" "",
-   "西洋比較演劇研究" "",
-   "現代社会学研究" "",
-   "日本経営診断学会論集" "",
-   "オーストリア文学" "",
-   "社会言語科学" "",
-   "季刊地理学" "",
-   "法社会学" "",
-   "イタリア学会誌" "",
-   "英米文化" "",
-   "社会情報学" "",
-   "東南アジア研究" "",
-   "日本近代文学" "",
-   "年報社会学論集" "",
-   "生命倫理" "",
-   "家族社会学研究" "",
-   "産学連携学" "",
-   "哲学" "",
-   "国語科教育" "",
-   "ジェンダー史学" "",
-   "観光研究" "",
-   "国際ビジネス研究" "",
-   "村落社会研究ジャーナル" "",
-   "オーストラリア研究" "",
-   "笑い学研究" "",
-   "現代監査" "",
-   "社会経済史学" "",
-   "時間学研究" "",
-   "宗教哲学研究" "",
-   "国際P2M学会誌" "",
-   "アジア・アフリカ地域研究" "",
-   "イギリス・ロマン派研究" "",
-   "比較文学" "",
-   "内陸アジア史研究" "",
-   "交通権" "",
-   "アジア経営研究" "",
-   "社会学年報" "",
-   "年報行政研究" "",
-   "アフリカ研究" "",
-   "教育学研究" "",
-   "書学書道史研究" "",
-   "教育学研究ジャーナル" "",
-   "東南アジア －歴史と文化－" "",
-   "教育學雑誌" "",
-   "福祉社会学研究" "",
-   "体育・スポーツ哲学研究" ""})
+  (->>
+   (slurp "journal-categories.tsv")
+   (str/split-lines)
+   (reduce
+    (fn [a x]
+      (let [[journal-name category-1 category-2] (str/split x #"\t")]
+        (assoc a journal-name [category-1 category-2])))
+    {})))
 
 (defn write-tsv-map [file-name map-seq]
   (with-open [out-file (clojure.java.io/writer file-name)]
@@ -138,17 +60,17 @@
                                        title)))
                      (assoc :permission false
                             :genre-1 "人文社会学論文"
-                            :genre-2 (:journal m)
-                            :genre-3 ""
-                            :genre-4 ""
-                            :year 2017)))))
+                            :genre-2 (get-in journal-to-category [(:journal m) 0] (str "NA: " (:journal m)))
+                            :genre-3 (get-in journal-to-category [(:journal m) 1] (str "NA: " (:journal m)))
+                            :genre-4 (:journal m)
+                            :year 2017 #_FIXME)))))
    (str/split-lines (slurp filename))))
 
-(defn extract-text [{:keys [title-string genre-2] :as db-entry} pdf-filename]
+(defn extract-text [{:keys [title-string genre-4] :as db-entry} pdf-filename]
   (let [raw-text (try (text/extract pdf-filename)
                       (catch java.lang.UnsupportedOperationException e (println e) ""))]
     (println db-entry)
-    (clean-text raw-text title-string genre-2)))
+    (clean-text raw-text title-string genre-4)))
 
 (defn batch-convert! [dir]
   (let [metadata-db (reduce (fn [a m] (assoc a (:basename m) m)) {} (metadata (str (fs/join dir "../bib.tsv"))))]

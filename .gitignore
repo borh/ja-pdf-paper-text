@@ -14,4 +14,3 @@ pom.xml.asc
 .nrepl-port
 refuse.clj
 resources/*
-*.tsv
